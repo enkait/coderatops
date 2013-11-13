@@ -9,6 +9,7 @@ from rest_framework import viewsets, mixins
 from rest_framework.views import APIView
 from rest_framework.decorators import action, link
 from rest_framework.response import Response
+from rest_framework import status
 
 class ChallengeViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = ((IsAuthenticated, ))
@@ -20,12 +21,15 @@ class ChallengeViewSet(viewsets.ReadOnlyModelViewSet):
             Challenge.objects.filter(challenged=self.request.user.pk)
 
     def create(self, request):
-        print "WUT"
-        serializer = ChallengeSpecSerializer(data=request.DATA)
+        serializer = ChallengeSerializer(data=request.DATA)
         if serializer.is_valid():
+            serializer.object.challenger = request.user
+            serializer.save()
+            """
             serializer.puzzle_instance.save()
             serializer.challenge.challenger = request.user
             serializer.challenge.save()
+            """
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
