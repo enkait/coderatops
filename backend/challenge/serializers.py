@@ -14,6 +14,11 @@ class ChallengeSpec(object):
         self.puzzle_instance_serializer = puzzle_instance_serializer
         self.challenge_serializer = challenge_serializer
 
+class ChallengeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Challenge
+        fields = ('id', 'challenged', 'title', 'puzzle_instance')
+
 class ChallengeSpecSerializer(serializers.Serializer):
     puzzle_instance = PuzzleInstanceSerializer
     challenge = ChallengeSerializer
@@ -21,9 +26,5 @@ class ChallengeSpecSerializer(serializers.Serializer):
     def restore_object(self, attrs, instance=None):
         if instance:
             raise Exception("Can't modify existing object")
+        print attrs.keys()
         return ChallengeSpec(**attrs)
-
-class ChallengeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Challenge
-        fields = ('id', 'challenged', 'title', 'puzzle_instance')
