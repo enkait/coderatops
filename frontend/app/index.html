@@ -7,7 +7,11 @@
     </head>
     <body ng-controller="PuzzleInstanceCtrl">
 
-        {{puzzle.title}}
+        <ul>
+            <li ng-repeat="puzzle in puzzles">
+            <p>{{puzzle.title}}</p>
+            </li>
+        </ul>
 
         <!-- In production use:
         <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
