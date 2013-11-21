@@ -1,4 +1,4 @@
-from django.conf.urls.defaults import patterns, include, url
+from django.conf.urls import patterns, include, url
 from rest_framework.urlpatterns import format_suffix_patterns
 from rest_framework import viewsets, routers
 from challenge import views
