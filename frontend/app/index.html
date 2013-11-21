@@ -6,12 +6,22 @@
         <link rel="stylesheet" href="css/app.css"/>
     </head>
     <body ng-controller="PuzzleInstanceCtrl">
-
-        <ul>
-            <li ng-repeat="puzzle in puzzles">
-            <p>{{puzzle.title}}</p>
-            </li>
-        </ul>
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span2">
+                    Search: <input ng-model="query"/>
+                </div>
+                <div class="span10">
+                    <ul class="puzzles">
+                        <li ng-repeat="puzzle in puzzles | filter:query">
+                        <p>{{puzzle.title}}</p>
+                        <p>{{puzzle.content}}</p>
+                        <p>{{query}}</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
 
         <!-- In production use:
         <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
