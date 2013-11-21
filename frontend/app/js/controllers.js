@@ -1,19 +1,9 @@
 var gameApp = angular.module('gameApp', ['ngResource']);
 
-gameApp.controller('PuzzleInstanceCtrl', function PuzzleInstanceCtrl($scope) {
-    /*
-    if (!('query' in $scope)) {
-        $scope.query = 'omg';
-    }
-    */
-    $scope.puzzles = [
-    {
-        'title' : 'n po k',
-        'content' : '3 po 12',
-    },
-    {
-        'title' : 'n po k2',
-        'content' : '8 po 4',
-    }
-    ];
+gameApp.controller('PuzzleInstanceCtrl', function PuzzleInstanceCtrl($scope, $http) {
+    $http.defaults.useXDomain = true;
+
+    $http.get('http://localhost:8000/puzzle/puzzles/.json').success(function(data) {
+        $scope.puzzles = $data;
+    });
 });
