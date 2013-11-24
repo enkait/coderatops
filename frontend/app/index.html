@@ -6,6 +6,8 @@
     <link rel="stylesheet" href="css/app.css"/>
 </head>
 <body ng-controller="PuzzleInstanceCtrl">
+    <div id="fb-root"></div>
+    <fb:login-button show-faces="true" max-rows="1" size="large"></fb:login-button>
     <div class="container-fluid">
         <div class="row-fluid">
             <div class="span2">
@@ -32,6 +34,7 @@
         <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
     -->
     <script src="lib/angular/angular.js"></script>
+    <script src="lib/angular/angular-cookies.js"></script>
     <script src="lib/angular/angular-resource.js"></script>
     <script src="lib/angular/angular-route.js"></script>
     <script src="js/app.js"></script>

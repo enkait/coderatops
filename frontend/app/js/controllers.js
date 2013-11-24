@@ -1,9 +1,13 @@
-var gameApp = angular.module('gameApp', ['ngResource']);
+'use strict';
 
-gameApp.controller('PuzzleInstanceCtrl', function PuzzleInstanceCtrl($scope, $http) {
+var gameAppControllers = angular.module('gameAppControllers', ['ngResource', 'fbLoginService']);
+
+gameAppControllers.controller('PuzzleInstanceCtrl', function PuzzleInstanceCtrl($scope, $http, $fbLogin) {
     $http.defaults.useXDomain = true;
 
-    $http.get('http://localhost:8000/puzzle/puzzles/.json').success(function(data) {
+    /*
+    $http.get('http://localhost:8000/puzzle/puzzles/.json').success(function($data) {
         $scope.puzzles = $data;
     });
+    */
 });
