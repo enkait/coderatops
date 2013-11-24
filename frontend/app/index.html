@@ -1,46 +1,77 @@
 <!doctype html>
-<html lang="en" ng-app="gameApp">
-<head>
-    <meta charset="utf-8">
-    <title>My AngularJS App</title>
-    <link rel="stylesheet" href="css/app.css"/>
-</head>
-<body ng-controller="PuzzleInstanceCtrl">
-    <div id="fb-root"></div>
-    <fb:login-button show-faces="true" max-rows="1" size="large"></fb:login-button>
-    <div class="container-fluid">
-        <div class="row-fluid">
-            <div class="span2">
-                Search: <input ng-model="query"/>
+<html lang="en" xmlns:ng="gameApp">
+    <head>
+        <meta charset="utf-8">
+        <title>My AngularJS App</title>
+        <link rel="stylesheet" href="css/app.css"/>
+    </head>
+    <body ng-controller="PuzzleInstanceCtrl">
+        <div id="fb-root"></div>
+        <fb:login-button show-faces="true" max-rows="1" size="large"></fb:login-button>
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span2">
+                    Search: <input ng-model="query"/>
+                </div>
+                Sort by:
+                <select ng-model="orderProp">
+                    <option value="title">Title</option>
+                    <option value="content">Content</option>
+                </select>
+                <div class="span10">
+                    <ul class="puzzles">
+                        <li ng-repeat="puzzle in puzzles | filter:query | orderBy:orderProp">
+                        <p>{{puzzle.title}}</p>
+                        <p>{{puzzle.content}}</p>
+                        <p>{{query}}</p>
+                        </li>
+                    </ul>
+                </div>
             </div>
-            Sort by:
-            <select ng-model="orderProp">
-              <option value="title">Title</option>
-              <option value="content">Content</option>
-          </select>
-          <div class="span10">
-            <ul class="puzzles">
-                <li ng-repeat="puzzle in puzzles | filter:query | orderBy:orderProp">
-                    <p>{{puzzle.title}}</p>
-                    <p>{{puzzle.content}}</p>
-                    <p>{{query}}</p>
-                </li>
-            </ul>
         </div>
-    </div>
-</div>
 
         <!-- In production use:
         <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
-    -->
-    <script src="lib/angular/angular.js"></script>
-    <script src="lib/angular/angular-cookies.js"></script>
-    <script src="lib/angular/angular-resource.js"></script>
-    <script src="lib/angular/angular-route.js"></script>
-    <script src="js/app.js"></script>
-    <script src="js/services.js"></script>
-    <script src="js/controllers.js"></script>
-    <script src="js/filters.js"></script>
-    <script src="js/directives.js"></script>
-</body>
+        -->
+        <script src="lib/angular/angular.js"></script>
+        <script src="lib/angular/angular-cookies.js"></script>
+        <script src="lib/angular/angular-resource.js"></script>
+        <script src="lib/angular/angular-route.js"></script>
+        <script src="js/app.js"></script>
+        <script src="js/services.js"></script>
+        <script src="js/controllers.js"></script>
+        <script src="js/filters.js"></script>
+        <script src="js/directives.js"></script>
+        <script>
+            window.fbAsyncInit = function() {
+                console.log(FB);
+                FB.init({
+                    appId      : '214230635421217',
+                    status     : true, // check login status
+                    cookie     : true, // enable cookies to allow the server to access the session
+                    xfbml      : true  // parse XFBML
+                });
+
+                angular.bootstrap(document, ['gameApp']);
+            };
+
+            (function(){
+                // If we've already installed the SDK, we're done
+                if (document.getElementById('facebook-jssdk')) {return;}
+
+                // Get the first script element, which we'll use to find the parent node
+                var firstScriptElement = document.getElementsByTagName('script')[0];
+
+                // Create a new script element and set its id
+                var facebookJS = document.createElement('script'); 
+                facebookJS.id = 'facebook-jssdk';
+
+                // Set the new script's source to the source of the Facebook JS SDK
+                facebookJS.src = '//connect.facebook.net/en_US/all.js';
+
+                // Insert the Facebook JS SDK into the DOM
+                firstScriptElement.parentNode.insertBefore(facebookJS, firstScriptElement);
+            }());
+        </script>
+    </body>
 </html>
