@@ -38,8 +38,10 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'puzzle',
     'challenge',
+    'fblogin',
     'rest_framework',
     'corsheaders',
+    'rest_framework.authtoken',
 )
 
 MIDDLEWARE_CLASSES = (
