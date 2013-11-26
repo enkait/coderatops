@@ -1,6 +1,6 @@
 'use strict';
 
-var gameApp = angular.module('gameApp', ['ngResource', 'ngCookies', 'gameAppControllers', 'fbLoginService', 'ngRoute', 'ng', 'gameAppDirectives']);
+var gameApp = angular.module('gameApp', ['ngResource', 'ngCookies', 'gameAppControllers', 'loginService', 'ngRoute', 'ng', 'gameAppDirectives']);
 
 gameApp.run(function ($http, $cookies) {
     $http.defaults.headers.common['X-CSRFToken'] = $cookies['csrftoken'];

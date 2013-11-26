@@ -2,12 +2,15 @@ from django.contrib.auth.models import User
 from django.shortcuts import render
 from rest_framework import viewsets, mixins
 from fblogin.models import FBUser
+from fblogin.serializers import FBUserSerializer
 from rest_framework.authtoken.models import Token
 from rest_framework import status
 
 # Create your views here.
 class FBUserViewSet(viewsets.ViewSet):
     permission_classes = (())
+    serializer_class = FBUserSerializer
+    queryset = FBUser.objects.all()
 
     def login(self, request):
         serializer = FBUserSerializer(data=request.DATA)

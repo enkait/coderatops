@@ -1,8 +1,8 @@
 'use strict';
 
-var fbLoginService = angular.module('fbLoginService', []);
+var loginService = angular.module('loginService', []);
 
-fbLoginService.factory('$fbLogin', function($window, $timeout, $location) {
+loginService.factory('$fbLogin', function($window, $timeout, $location) {
     return new function() {
         var self = this;
 
@@ -71,4 +71,7 @@ fbLoginService.factory('$fbLogin', function($window, $timeout, $location) {
         FB.Event.subscribe('auth.authResponseChange', self.handler);
         FB.getLoginStatus(self.handler);
     };
+});
+
+loginService.factory('$restLogin', function($window, $timeout, $location, $resource) {
 });

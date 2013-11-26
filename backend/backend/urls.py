@@ -17,5 +17,6 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^puzzle/', include('puzzle.urls')),
     url(r'^challenge/', include('challenge.urls')),
+    url(r'^fblogin/', include('fblogin.urls')),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 )
