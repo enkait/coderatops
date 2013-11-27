@@ -5,9 +5,9 @@ from rest_framework.authtoken.models import Token
 from django.db.models.signals import post_save
 
 class FBUser(models.Model):
-    fbid = models.TextField(primary_key=True)
     user = models.OneToOneField(User)
-    access_token = models.CharField(max_length=200)
+    fbid = models.TextField()
+    access_token = models.TextField()
 
     def save(self, *args, **kwargs):
         user, created = User.objects.get_or_create(username=self.fbid)

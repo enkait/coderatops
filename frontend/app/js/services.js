@@ -2,7 +2,7 @@
 
 var loginService = angular.module('loginService', []);
 
-loginService.factory('$fbLogin', function($window, $timeout, $location) {
+loginService.factory('$fbLogin', function($window, $timeout, $location, $backendAuth) {
     return new function() {
         var self = this;
 
@@ -51,6 +51,18 @@ loginService.factory('$fbLogin', function($window, $timeout, $location) {
         self.connectedHandler = function(response) {
             self.userID = response.authResponse.userID;
             self.accessToken = response.authResponse.accessToken;
+            alert("wut");
+            self.backendAuthToken = $backendAuth.login({
+                "fbid": self.userID, "access_token": self.accessToken,
+            }, function(value, response) {
+                console.log(value);
+                console.log("success");
+            }, function(response) {
+                console.log(response);
+                console.log(response.status);
+                console.log(response.data);
+                console.log("fail");
+            });
         };
 
         self.disconnectedHandler = function(response) {
@@ -73,5 +85,12 @@ loginService.factory('$fbLogin', function($window, $timeout, $location) {
     };
 });
 
-loginService.factory('$restLogin', function($window, $timeout, $location, $resource) {
+loginService.factory('$backendAuth', function($window, $timeout, $location, $resource) {
+    return $resource('http://localhost:8000/fblogin/fblogin/login/', [], {
+        login: {
+            method: 'POST',
+            params: {},
+            isArray: false,
+        },
+    });
 });
