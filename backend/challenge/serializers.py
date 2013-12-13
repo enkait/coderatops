@@ -21,5 +21,4 @@ class ChallengeSpecSerializer(serializers.Serializer):
     def restore_object(self, attrs, instance=None):
         if instance:
             raise Exception("Can't modify existing object")
-        print attrs.keys()
         return ChallengeSpec(**attrs)

@@ -23,7 +23,6 @@ class PuzzleViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Puzzle.objects.all()
 
     def get_queryset(self):
-        print self.request.user
         return Puzzle.objects.filter(creator=self.request.user.pk)
 
 class TestViewSet(viewsets.ReadOnlyModelViewSet):
@@ -38,8 +37,6 @@ class PuzzleInstanceViewSet(viewsets.ModelViewSet):
 
     @link()
     def rating(self, request, pk, format=None):
-        print dir(self.request)
-        print request.user
         submissions = Submission.objects.filter(owner=request.user.pk)
         points = len([sub for sub in submissions if sub.ok()])
         rating = PuzzleInstanceRating(points=points)

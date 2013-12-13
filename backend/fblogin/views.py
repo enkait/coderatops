@@ -2,11 +2,12 @@ from django.contrib.auth.models import User
 from django.shortcuts import render
 from rest_framework import viewsets, mixins
 from fblogin.models import FBUser
-from fblogin.serializers import FBUserSerializer, TokenSerializer
+from fblogin.serializers import FBUserSerializer, ProfileSerializer, TokenSerializer
 from rest_framework.authtoken.models import Token
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 import facebook
 
 # Create your views here.
@@ -30,6 +31,14 @@ class FBUserViewSet(viewsets.GenericViewSet):
             if created:
                 return Response(serialized_token.data, status=status.HTTP_201_CREATED)
             return Response(serialized_token.data, status=status.HTTP_200_OK)
-        print "wut"
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class ProfileViewSet(viewsets.GenericViewSet):
+    permission_classes = ((IsAuthenticated, ))
+    serializer_class = FBUserSerializer
+    queryset = FBUser.objects.all()
+
+    def profile(self, request):
+        fbuser = FBUser.objects.get(user=request.user)
+        return Response(ProfileSerializer(fbuser).data, status=status.HTTP_200_OK)
 

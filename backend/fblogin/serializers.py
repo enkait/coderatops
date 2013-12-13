@@ -5,6 +5,11 @@ from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 import facebook
 
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FBUser
+        fields = ('fbid', 'access_token')
+
 class FBUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = FBUser
