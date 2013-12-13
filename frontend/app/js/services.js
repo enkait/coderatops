@@ -2,11 +2,12 @@
 
 var loginService = angular.module('loginService', []);
 
-loginService.factory('$fbLogin', function($window, $timeout, $location, $backendAuth) {
+loginService.factory('$fbLogin', function($window, $timeout, $location, $backendAuth, $cookies) {
     return new function() {
         var self = this;
 
         self.loginStatus = 'none';
+        self.authToken = null;
 
         self.handler = function(response) {
             self.loginStatus = response.status;
@@ -41,6 +42,10 @@ loginService.factory('$fbLogin', function($window, $timeout, $location, $backend
             return self.loginStatus === 'connected';
         };
 
+        self.isAuthenticated = function() {
+            return self.authToken !== null;
+        };
+
         self.needsLogin = function() {
             return self.loginStatus !== 'none' && $scope.loginStatus !== 'connected';
         };
@@ -51,16 +56,16 @@ loginService.factory('$fbLogin', function($window, $timeout, $location, $backend
         self.connectedHandler = function(response) {
             self.userID = response.authResponse.userID;
             self.accessToken = response.authResponse.accessToken;
-            alert("wut");
-            self.backendAuthToken = $backendAuth.login({
+            $backendAuth.login({
                 "fbid": self.userID, "access_token": self.accessToken,
             }, function(value, response) {
-                console.log(value);
+                self.authToken = value.key
+                $cookies.authToken = self.authToken;
                 console.log("success");
+                console.log(self.authToken);
+                $timeout(function() {$location.path('/');});
             }, function(response) {
                 console.log(response);
-                console.log(response.status);
-                console.log(response.data);
                 console.log("fail");
             });
         };
@@ -68,6 +73,8 @@ loginService.factory('$fbLogin', function($window, $timeout, $location, $backend
         self.disconnectedHandler = function(response) {
             self.userID = null;
             self.accessToken = null;
+            self.authToken = null;
+            $cookies.authToken = null;
         };
 
         self.handlers = [];

@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 class Puzzle(models.Model):
     title = models.CharField(max_length=200)
     statement = models.CharField(max_length=100000)
+    creator = models.ForeignKey(User, related_name="puzzles_created")
 
 class Test(models.Model):
     DIFFICULTY_CHOICES = (
@@ -13,7 +14,7 @@ class Test(models.Model):
     )
 
     puzzle = models.ForeignKey(Puzzle, related_name="tests")
-    description = models.CharField(max_length=1000)
+    input = models.CharField(max_length=1000)
     output = models.CharField(max_length=1000)
     difficulty = models.CharField(max_length=100, choices=DIFFICULTY_CHOICES)
 

@@ -19,8 +19,12 @@ from permissions import IsOwner
 
 class PuzzleViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = ((IsAuthenticated, ))
-    queryset = Puzzle.objects.all()
     serializer_class = PuzzleSerializer
+    queryset = Puzzle.objects.all()
+
+    def get_queryset(self):
+        print self.request.user
+        return Puzzle.objects.filter(creator=self.request.user.pk)
 
 class TestViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = ((IsAuthenticated, ))

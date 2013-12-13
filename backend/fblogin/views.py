@@ -7,6 +7,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
+import facebook
 
 # Create your views here.
 class FBUserViewSet(viewsets.GenericViewSet):
@@ -16,23 +17,16 @@ class FBUserViewSet(viewsets.GenericViewSet):
 
     def login(self, request):
         serializer = FBUserSerializer(data=request.DATA)
-        print "OK"
-        print serializer.object
         serializer.is_valid()
-        print serializer.errors
-        # TODO: VERIFY!!!!!!
-        # FOR NOW WE PRETTY MUCH TAKE THEIR WORD FOR IT
 
         if serializer.is_valid():
-            print "omg"
             fbuser, created = FBUser.objects.get_or_create(fbid=serializer.object.fbid)
             fbuser.access_token = serializer.object.access_token
             fbuser.save()
 
             token = Token.objects.get(user=fbuser.user)
-            print token
             serialized_token = TokenSerializer(token)
-            print serialized_token
+
             if created:
                 return Response(serialized_token.data, status=status.HTTP_201_CREATED)
             return Response(serialized_token.data, status=status.HTTP_200_OK)

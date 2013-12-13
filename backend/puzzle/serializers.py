@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 class TestSerializer(serializers.ModelSerializer):
     class Meta:
         model = Test
-        fields = ('id', 'puzzle', 'description', 'difficulty')
+        fields = ('id', 'puzzle', 'input', 'difficulty')
 
 class PuzzleSerializer(serializers.ModelSerializer):
     tests = TestSerializer(many=True)

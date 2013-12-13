@@ -38,14 +38,15 @@ gameApp.run(function($rootScope, $fbLogin, $location) {
         if (!$fbLogin.isEstablished()) {
             console.log("rerouting to wait");
             $location.path('/wait/');
+        } else if (!$fbLogin.isConnected()) {
+            console.log("rerouting to login");
+            $location.path('/login/');
+        } else if (!$fbLogin.isAuthenticated()) {
+            console.log("rerouting to wait");
+            $location.path('/wait/');
         } else {
-            if ($fbLogin.isConnected()) {
-                console.log("rerouting to main");
-                $location.path('/');
-            } else {
-                console.log("rerouting to login");
-                $location.path('/login/');
-            }
+            console.log("rerouting to main");
+            $location.path('/');
         }
     });
 });
