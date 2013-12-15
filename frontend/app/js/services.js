@@ -124,6 +124,22 @@ userDataService.factory('$friends', function($resource, $cookies) {
     });
 });
 
+userDataService.factory('$challenges', function($resource, $cookies) {
+    return $resource('http://localhost:8000/challenge/challenges/', [], {
+        create: {
+            method: 'POST',
+            params: {},
+            headers: { 'Authorization' : "Token " + $cookies.authToken },
+        },
+        list: {
+            method: 'GET',
+            params: {},
+            isArray: true,
+            headers: { 'Authorization' : "Token " + $cookies.authToken },
+        },
+    });
+});
+
 var profileService = angular.module('profileService', ['userDataService']);
 
 profileService.factory('$profile', function($location, $friends, $q) {

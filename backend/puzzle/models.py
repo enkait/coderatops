@@ -20,7 +20,7 @@ class Test(models.Model):
 
 class PuzzleInstance(models.Model):
     puzzle = models.ForeignKey(Puzzle, related_name="puzzle_instances")
-    tests = models.ManyToManyField(Test, related_name="puzzle_insances")
+    tests = models.ManyToManyField(Test, related_name="puzzle_instances")
 
 class Submission(models.Model):
     owner = models.ForeignKey(User, related_name="submissions")
