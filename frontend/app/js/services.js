@@ -113,12 +113,13 @@ loginService.factory('$backendAuth', function($resource) {
 
 var userDataService = angular.module('userDataService', []);
 
-userDataService.factory('$friends', function($resource) {
+userDataService.factory('$friends', function($resource, $cookies) {
     return $resource('http://localhost:8000/fblogin/profile/friends/', [], {
         friends: {
             method: 'GET',
             params: {},
             isArray: true,
+            headers: { 'Authorization' : "Token " + $cookies.authToken },
         },
     });
 });

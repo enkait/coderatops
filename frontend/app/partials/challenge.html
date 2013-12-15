@@ -1,0 +1,7 @@
+<div>
+    <div class="{{challenged}}" ng-click="$event.preventDefault()" ng-repeat="friend in friends">
+        <a href="#" class="{{friend.name}}" ng-click="$parent.challenged=friend">{{friend.name}}</a>
+    </div>
+    <p ng-hide="challenged">Choose an opponent</p>
+    <p ng-show="challenged">You have elected to challenge: {{challenged.name}}</p>
+</div>

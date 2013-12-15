@@ -19,6 +19,7 @@ gameApp.config(['$routeProvider', function($routeProvider) {
         templateUrl: 'partials/wait.html',
     }).when("/challenge/", {
         templateUrl: 'partials/challenge.html',
+        controller: 'ChallengeCtrl',
     }).when("/", {
         templateUrl: 'partials/instance.html',
         controller: 'PuzzleInstanceCtrl',
