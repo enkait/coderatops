@@ -2,12 +2,17 @@
 
 var loginService = angular.module('loginService', []);
 
-loginService.factory('$fbLogin', function($window, $timeout, $location, $backendAuth, $cookies) {
+loginService.factory('$fbLogin', function($timeout, $location, $backendAuth, $cookies, $rootScope) {
     return new function() {
         var self = this;
 
         self.loginStatus = 'none';
         self.authToken = null;
+        self.redirect_path = '/';
+
+        self.set_redirect_path = function(path) {
+            self.redirect_path = path;
+        };
 
         self.handler = function(response) {
             self.loginStatus = response.status;
@@ -18,7 +23,9 @@ loginService.factory('$fbLogin', function($window, $timeout, $location, $backend
             } else {
                 self.disconnectedHandler(response);
             }
-            $timeout(function() {$location.path('/');});
+            $timeout(function() {
+                $location.path(self.redirect_path);
+            });
             //self.runHandlers();
         };
 
@@ -63,7 +70,9 @@ loginService.factory('$fbLogin', function($window, $timeout, $location, $backend
                 $cookies.authToken = self.authToken;
                 console.log("success");
                 console.log(self.authToken);
-                $timeout(function() {$location.path('/');});
+                $timeout(function() {
+                    $location.path(self.redirect_path);
+                });
             }, function(response) {
                 console.log(response);
                 console.log("fail");
@@ -92,7 +101,7 @@ loginService.factory('$fbLogin', function($window, $timeout, $location, $backend
     };
 });
 
-loginService.factory('$backendAuth', function($window, $timeout, $location, $resource) {
+loginService.factory('$backendAuth', function($resource) {
     return $resource('http://localhost:8000/fblogin/fblogin/', [], {
         login: {
             method: 'POST',
@@ -104,7 +113,7 @@ loginService.factory('$backendAuth', function($window, $timeout, $location, $res
 
 var userDataService = angular.module('userDataService', []);
 
-userDataService.factory('$friends', function($window, $timeout, $location, $resource) {
+userDataService.factory('$friends', function($resource) {
     return $resource('http://localhost:8000/fblogin/profile/friends/', [], {
         friends: {
             method: 'GET',
@@ -116,7 +125,7 @@ userDataService.factory('$friends', function($window, $timeout, $location, $reso
 
 var profileService = angular.module('profileService', ['userDataService']);
 
-profileService.factory('$profile', function($window, $timeout, $location, $resource, $friends, $q) {
+profileService.factory('$profile', function($location, $friends, $q) {
     return new function() {
         var self = this;
 

@@ -17,36 +17,34 @@ gameApp.config(['$routeProvider', function($routeProvider) {
         templateUrl: 'partials/login.html',
     }).when("/wait/", {
         templateUrl: 'partials/wait.html',
+    }).when("/challenge/", {
+        templateUrl: 'partials/challenge.html',
     }).when("/", {
         templateUrl: 'partials/instance.html',
         controller: 'PuzzleInstanceCtrl',
     });
 }]);
 
+var update_true_path = function($rootScope, cur_path) {
+    console.log("updating");
+    console.log(cur_path);
+    console.log($rootScope.true_path);
+};
+
 gameApp.run(function($rootScope, $fbLogin, $location) {
-    /*
-    $rootScope.$on('$locationChangeStart', function(event, next, current) {
-        console.log("locationChangeStart");
-        console.log(next);
-        console.log(current);
-    });
-    */
     $rootScope.$on('$routeChangeStart', function(event, next, current) {
-        console.log("routing: " + next.route);
-        console.log(next);
-        console.log($fbLogin.isEstablished());
+        var cur_path = $location.path();
+        if (cur_path !== '/wait/' && cur_path !== '/login/') {
+            $fbLogin.set_redirect_path(cur_path);
+        }
         if (!$fbLogin.isEstablished()) {
-            console.log("rerouting to wait");
             $location.path('/wait/');
         } else if (!$fbLogin.isConnected()) {
-            console.log("rerouting to login");
             $location.path('/login/');
         } else if (!$fbLogin.isAuthenticated()) {
-            console.log("rerouting to wait");
             $location.path('/wait/');
         } else {
-            console.log("rerouting to main");
-            $location.path('/');
+            console.log("NOT REROUTING");
         }
     });
 });
