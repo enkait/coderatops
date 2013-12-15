@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 
 class FBLoginRouter(routers.DefaultRouter):
     routes = [
-        routers.Route(url=r'^{prefix}/login$',
+        routers.Route(url=r'^{prefix}$',
             mapping={'post': 'login'},
             name='login',
             initkwargs={}),
@@ -18,9 +18,9 @@ fb_login_router.register(r'fblogin', FBUserViewSet)
 
 class ProfileRouter(routers.DefaultRouter):
     routes = [
-        routers.Route(url=r'^{prefix}/profile$',
-            mapping={'get': 'profile'},
-            name='profile',
+        routers.Route(url=r'^{prefix}/friends$',
+            mapping={'get': 'list'},
+            name='friends-list',
             initkwargs={}),
     ]
 

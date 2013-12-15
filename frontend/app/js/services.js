@@ -93,11 +93,50 @@ loginService.factory('$fbLogin', function($window, $timeout, $location, $backend
 });
 
 loginService.factory('$backendAuth', function($window, $timeout, $location, $resource) {
-    return $resource('http://localhost:8000/fblogin/fblogin/login/', [], {
+    return $resource('http://localhost:8000/fblogin/fblogin/', [], {
         login: {
             method: 'POST',
             params: {},
             isArray: false,
         },
     });
+});
+
+var userDataService = angular.module('userDataService', []);
+
+userDataService.factory('$friends', function($window, $timeout, $location, $resource) {
+    return $resource('http://localhost:8000/fblogin/profile/friends/', [], {
+        friends: {
+            method: 'GET',
+            params: {},
+            isArray: true,
+        },
+    });
+});
+
+var profileService = angular.module('profileService', ['userDataService']);
+
+profileService.factory('$profile', function($window, $timeout, $location, $resource, $friends, $q) {
+    return new function() {
+        var self = this;
+
+        self.connected_friends = function() {
+            var d = $q.defer();
+
+            FB.api('/me/friends', {fields: 'name'}, function(response) {
+                $friends.friends({}, function(conn_friends) {
+                    var indices = conn_friends.map(function(friend) {
+                        console.log(friend);
+                        return friend.fbid;
+                    });
+                    var friends = response.data.filter(function(element) {
+                        return indices.indexOf(element.id) != -1;
+                    });
+                    d.resolve(friends);
+                });
+            });
+
+            return d.promise;
+        };
+    };
 });

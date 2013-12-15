@@ -33,12 +33,12 @@ class FBUserViewSet(viewsets.GenericViewSet):
             return Response(serialized_token.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class ProfileViewSet(viewsets.GenericViewSet):
+class ProfileViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
     permission_classes = ((IsAuthenticated, ))
-    serializer_class = FBUserSerializer
-    queryset = FBUser.objects.all()
+    serializer_class = ProfileSerializer
+    model = FBUser
 
-    def profile(self, request):
-        fbuser = FBUser.objects.get(user=request.user)
-        return Response(ProfileSerializer(fbuser).data, status=status.HTTP_200_OK)
-
+    def get_queryset(self):
+        fbuser = FBUser.objects.get(user=self.request.user)
+        friends = fbuser.friends()
+        return friends

@@ -8,7 +8,7 @@ import facebook
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = FBUser
-        fields = ('fbid', 'access_token')
+        fields = ('fbid',)
 
 class FBUserSerializer(serializers.ModelSerializer):
     class Meta:
