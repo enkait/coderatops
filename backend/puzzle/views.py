@@ -1,8 +1,7 @@
 from rest_framework.permissions import IsAuthenticated
 from puzzle.models import Puzzle, Test, PuzzleInstance, Submission
-from django.contrib.auth.models import User
 from puzzle.serializers import PuzzleSerializer
-from puzzle.serializers import UserSerializer
+from puzzle.serializers import FBUserSerializer
 from puzzle.serializers import TestSerializer
 from puzzle.serializers import PuzzleInstanceSerializer
 from puzzle.serializers import SubmissionSerializer

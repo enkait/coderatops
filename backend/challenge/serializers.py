@@ -2,14 +2,15 @@ from django.forms import widgets
 from rest_framework import serializers
 from challenge.models import Challenge
 from puzzle.serializers import PuzzleInstanceSerializer
-from django.contrib.auth.models import User
+from fblogin.serializers import ProfileSerializer
 
 class ChallengeSerializer(serializers.ModelSerializer):
-    challenged = serializers.CharField(max_length=200)
-    challenger = serializers.CharField(max_length=200)
+    challenged = ProfileSerializer()
+    challenger = ProfileSerializer()
 
     class Meta:
         model = Challenge
+        depth = 2
         fields = ('id', 'challenger', 'challenged', 'message', 'puzzle_instance')
 
 class ChallengeSpec(object):

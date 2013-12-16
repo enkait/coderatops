@@ -5,7 +5,6 @@ from puzzle import views
 from puzzle.views import PuzzleViewSet
 from puzzle.views import TestViewSet, PuzzleInstanceViewSet, SubmissionViewSet
 from puzzle.models import Puzzle
-from django.contrib.auth.models import User
 
 router = routers.DefaultRouter()
 router.register(r'puzzles', PuzzleViewSet)

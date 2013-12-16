@@ -1,11 +1,11 @@
 from django.db import models
-from django.contrib.auth.models import User
+from fblogin.models import FBUser
 import random
 
 class Puzzle(models.Model):
     title = models.CharField(max_length=200)
     statement = models.CharField(max_length=100000)
-    creator = models.ForeignKey(User, related_name="puzzles_created")
+    creator = models.ForeignKey(FBUser, related_name="puzzles_created")
 
 class Test(models.Model):
     DIFFICULTY_CHOICES = (
@@ -26,24 +26,15 @@ class PuzzleInstance(models.Model):
     @staticmethod
     def create(challenger, challenged, spec):
         puzzle = random.choice(Puzzle.objects.all())
-        print "omg"
-        print puzzle
         instance = PuzzleInstance(puzzle=puzzle)
-        print "omg2"
+        instance.save()
         for test in Test.objects.filter(puzzle=puzzle):
-            print "omg3"
-            print dir(instance)
-            print "zomfg"
-            try:
-                print dir(instance.tests)
-                instance.tests.add(test)
-            except Exception as ex:
-                print ex
-        print "omg4"
+            instance.tests.add(test)
+        instance.save()
         return instance
 
 class Submission(models.Model):
-    owner = models.ForeignKey(User, related_name="submissions")
+    owner = models.ForeignKey(FBUser, related_name="submissions")
     test = models.ForeignKey(Test, related_name="submissions")
     puzzle_instance = models.ForeignKey(PuzzleInstance, related_name="submissions")
     answer = models.CharField(max_length=1000)

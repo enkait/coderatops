@@ -2,7 +2,6 @@ from django.db import models
 from django.forms import widgets
 from rest_framework import serializers
 from puzzle.models import Puzzle, Test, PuzzleInstance, Submission
-from django.contrib.auth.models import User
 
 class PuzzleInstanceRating:
     def __init__(self, points=None):

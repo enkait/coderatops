@@ -1,7 +1,7 @@
 from django.forms import widgets
 from rest_framework import serializers
 from puzzle.models import Puzzle, Test, PuzzleInstance, Submission
-from django.contrib.auth.models import User
+from fblogin.models import FBUser
 
 class TestSerializer(serializers.ModelSerializer):
     class Meta:
@@ -24,8 +24,8 @@ class SubmissionSerializer(serializers.ModelSerializer):
         model = Submission
         fields = ('id', 'test', 'puzzle_instance', 'answer')
 
-class UserSerializer(serializers.ModelSerializer):
+class FBUserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
+        model = FBUser
         fields = ('id', 'username')
 
