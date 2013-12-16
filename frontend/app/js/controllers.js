@@ -10,7 +10,7 @@ gameAppControllers.controller('PuzzleInstanceCtrl', function PuzzleInstanceCtrl(
     });
 });
 
-gameAppControllers.controller('ChallengeCtrl', function ChallengeCtrl($scope, $profile, $challenges) {
+gameAppControllers.controller('ChallengeCtrl', function ChallengeCtrl($scope, $profile, $challenges, $location) {
     console.log("Challenged:");
     console.log($scope.challenged);
     $profile.connected_friends().then(function(friends) {
@@ -24,11 +24,25 @@ gameAppControllers.controller('ChallengeCtrl', function ChallengeCtrl($scope, $p
         $challenges.create({
             challenged: friend.id,
             message: message,
-        }, function(friend) {
+        }, function(challenge) {
             console.log("success");
+            $location.path('/challenge/' + challenge.id);
         }, function(response) {
             console.log("fail");
             console.log(response);
         });
     };
+});
+
+gameAppControllers.controller('SolveChallengeCtrl', function SolveChallengeCtrl($scope, $profile, $challenges, $routeParams) {
+    console.log("Challenge:");
+    console.log($routeParams.challengeid);
+    $challenges.retrieve({id : $routeParams.challengeid}, function(challenge) {
+            console.log("Succeeded in getting challenge");
+            console.log(challenge);
+            $scope.challenge = challenge
+        }, function(response) {
+            console.log("Failed to get challenge");
+            console.log(response);
+    });
 });

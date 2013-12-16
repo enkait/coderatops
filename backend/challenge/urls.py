@@ -11,6 +11,10 @@ class ChallengeRouter(routers.DefaultRouter):
             mapping={'post': 'create'},
             name='create',
             initkwargs={}),
+        routers.Route(url=r'^{prefix}/{lookup}$',
+            mapping={'get': 'retrieve'},
+            name='retrieve',
+            initkwargs={}),
     ]
 
 challenge_router = ChallengeRouter()

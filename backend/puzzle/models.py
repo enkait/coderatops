@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+import random
 
 class Puzzle(models.Model):
     title = models.CharField(max_length=200)
@@ -21,6 +22,25 @@ class Test(models.Model):
 class PuzzleInstance(models.Model):
     puzzle = models.ForeignKey(Puzzle, related_name="puzzle_instances")
     tests = models.ManyToManyField(Test, related_name="puzzle_instances")
+
+    @staticmethod
+    def create(challenger, challenged, spec):
+        puzzle = random.choice(Puzzle.objects.all())
+        print "omg"
+        print puzzle
+        instance = PuzzleInstance(puzzle=puzzle)
+        print "omg2"
+        for test in Test.objects.filter(puzzle=puzzle):
+            print "omg3"
+            print dir(instance)
+            print "zomfg"
+            try:
+                print dir(instance.tests)
+                instance.tests.add(test)
+            except Exception as ex:
+                print ex
+        print "omg4"
+        return instance
 
 class Submission(models.Model):
     owner = models.ForeignKey(User, related_name="submissions")

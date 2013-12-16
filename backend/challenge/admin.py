@@ -1,3 +1,7 @@
+from challenge.models import Challenge
 from django.contrib import admin
 
-# Register your models here.
+class ChallengeAdmin(admin.ModelAdmin):
+    pass
+
+admin.site.register(Challenge, ChallengeAdmin)

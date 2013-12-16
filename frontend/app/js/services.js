@@ -125,7 +125,7 @@ userDataService.factory('$friends', function($resource, $cookies) {
 });
 
 userDataService.factory('$challenges', function($resource, $cookies) {
-    return $resource('http://localhost:8000/challenge/challenges/', [], {
+    return $resource('http://localhost:8000/challenge/challenges/:id', [], {
         create: {
             method: 'POST',
             params: {},
@@ -135,6 +135,11 @@ userDataService.factory('$challenges', function($resource, $cookies) {
             method: 'GET',
             params: {},
             isArray: true,
+            headers: { 'Authorization' : "Token " + $cookies.authToken },
+        },
+        retrieve: {
+            method: 'GET',
+            params: {},
             headers: { 'Authorization' : "Token " + $cookies.authToken },
         },
     });

@@ -1,7 +1,9 @@
 from rest_framework.permissions import IsAuthenticated
 from challenge.models import Challenge
 from django.contrib.auth.models import User
-from challenge.serializers import ChallengeSerializer, CreateChallengeSerializer
+from challenge.serializers import ChallengeSerializer, ChallengeSpecSerializer
+from puzzle.models import PuzzleInstance
+from fblogin.models import FBUser
 from rest_framework import generics
 from rest_framework import viewsets
 from django.http import Http404
@@ -20,18 +22,26 @@ class ChallengeViewSet(viewsets.ReadOnlyModelViewSet):
             Challenge.objects.filter(challenged=self.request.user.pk)
 
     def create(self, request):
-        print request.DATA
-        serializer = CreateChallengeSerializer(data=request.DATA)
-        print "wut"
-        print dir(serializer)
+        serializer = ChallengeSpecSerializer(data=request.DATA)
         if serializer.is_valid():
             serializer.object.challenger = request.user
-            print serializer
-            serializer.save()
-            """
-            serializer.puzzle_instance.save()
-            serializer.challenge.challenger = request.user
-            serializer.challenge.save()
-            """
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            challenger = request.user
+            fbuser = FBUser.objects.filter(fbid=serializer.object.challenged)
+            challenged = fbuser.first().user
+            message = serializer.object.message
+            puzzle_instance = PuzzleInstance.create(challenger, challenged, {})
+            puzzle_instance.save()
+            challenge = Challenge(challenger=challenger, challenged=challenged,
+                    message=message, puzzle_instance=puzzle_instance)
+            challenge.save()
+            result_serializer = ChallengeSerializer(challenge)
+            return Response(result_serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def retrieve(self, request, pk):
+        challenge = Challenge.objects.filter(pk=pk).first()
+        if (challenge != None and challenge.challenger != request.user
+                and challenge.challenged != request.user):
+            return Response("Can't access this challenge", status=status.HTTP_400_BAD_REQUEST)
+        result_serializer = ChallengeSerializer(challenge)
+        return Response(result_serializer.data, status=status.HTTP_200_OK)
