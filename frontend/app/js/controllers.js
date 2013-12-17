@@ -39,26 +39,7 @@ var find_predicate = function(wh, predicate) {
 gameAppControllers.controller('ChallengesCtrl', function ChallengeCtrl($scope, $profile, $challenges, $location) {
     $challenges.list({}, function(challenge_list) {
         $scope.challenge_list = challenge_list;
-
-        for (var i = 0; i < challenge_list.length; i++) {
-            var challenge = challenge_list[i];
-            $profile.get_details(challenge.challenger.fbid).then(function(ind) {
-                return function(details) {
-                    $scope.challenge_list[ind].challenger = details;
-                    if ($scope.challenge_list[ind].enemy === details.id) {
-                        $scope.challenge_list[ind].enemy_details = details;
-                    }
-                };
-            }(i));
-            $profile.get_details(challenge.challenged.fbid).then(function(ind) {
-                return function(details) {
-                    $scope.challenge_list[ind].challenged = details;
-                    if ($scope.challenge_list[ind].enemy === details.id) {
-                        $scope.challenge_list[ind].enemy_details = details;
-                    }
-                };
-            }(i));
-        }
+        console.log($scope.challenge_list);
     }, function(response) {
         console.log("fail");
         console.log(response);
