@@ -29,7 +29,7 @@ gameAppControllers.controller('ChallengeCtrl', function ChallengeCtrl($scope, $p
     };
 });
 
-gameAppControllers.controller('SolveChallengeCtrl', function SolveChallengeCtrl($scope, $profile, $challenges, $submissions, $routeParams, $instances, $fbLogin) {
+gameAppControllers.controller('SolveChallengeCtrl', function SolveChallengeCtrl($scope, $profile, $challenges, $submissions, $routeParams, $instances, $fbLogin, $timeout) {
     var find_predicate = function(wh, predicate) {
         for (var i = 0; i < wh.length; i++) {
             if (predicate(wh[i])) return wh[i];
@@ -65,7 +65,16 @@ gameAppControllers.controller('SolveChallengeCtrl', function SolveChallengeCtrl(
                     });
                 });
             }
-            $scope.tests = test_list;
+            if (!$scope.tests) {
+                $scope.tests = test_list;
+            } else {
+                for (var i = 0; i < test_list.length; i++) {
+                    $scope.tests[i].solved_by_user = test_list[i].solved_by_user;
+                    $scope.tests[i].solved_by_enemy = test_list[i].solved_by_enemy;
+                    $scope.tests[i].attempted_by_user = test_list[i].attempted_by_user;
+                    $scope.tests[i].attempted_by_enemy = test_list[i].attempted_by_enemy;
+                }
+            }
         }, function(response) {
             console.log("fail");
             console.log(response);
@@ -88,6 +97,14 @@ gameAppControllers.controller('SolveChallengeCtrl', function SolveChallengeCtrl(
     $challenges.retrieve({id : $routeParams.challengeid}, function(challenge) {
         $scope.challenge = challenge;
         $scope.update_tests();
+        $scope.test_updater = function() {
+            $scope.update_tests();
+            $scope.current_timeout_promise = $timeout($scope.test_updater, 2000);
+        };
+        $scope.current_timeout_promise = $timeout($scope.test_updater, 2000);
+        $scope.$on('$destroy', function(){
+            $timeout.cancel($scope.current_timeout_promise);
+        });
     }, function(response) {
         console.log("Failed to get challenge");
         console.log(response);
