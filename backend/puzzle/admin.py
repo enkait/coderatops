@@ -15,5 +15,9 @@ class SubmissionInline(admin.TabularInline):
 class PuzzleInstanceAdmin(admin.ModelAdmin):
     inlines = [SubmissionInline]
 
+class SubmissionAdmin(admin.ModelAdmin):
+    pass
+
 admin.site.register(Puzzle, PuzzleAdmin)
 admin.site.register(PuzzleInstance, PuzzleInstanceAdmin)
+admin.site.register(Submission, SubmissionAdmin)

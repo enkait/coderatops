@@ -1,3 +1,27 @@
 <div>
-    Challenge: {{challenge.id}}
+    <p>{{challenge.puzzle_instance.puzzle.title}}</p>
+    <p>{{challenge.puzzle_instance.puzzle.statement}}</p>
+    <div ng-click="$event.preventDefault()" ng-repeat="test in challenge.puzzle_instance.tests">
+        <p>
+        <table class="test">
+            <tr>
+                <td>
+                    {{test.input}}
+                </td>
+            </tr>
+            <tr>
+                <td ng-show="!solved">
+                    <input ng-model="output"/>
+                    <button ng-click="$parent.submit(test.id, output)">Submit</button>
+                </td>
+                <td ng-show="solved && user_won">
+                    You've solved this test case correctly!
+                </td>
+                <td ng-show="solved && !user_won">
+                    Your opponent has solved this test case first!
+                </td>
+            </tr>
+        </table>
+        </p>
+    </div>
 </div>

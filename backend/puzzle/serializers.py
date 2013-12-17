@@ -8,6 +8,11 @@ class TestSerializer(serializers.ModelSerializer):
         model = Test
         fields = ('id', 'puzzle', 'input', 'difficulty')
 
+class SmallTestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Test
+        fields = ('id',)
+
 class PuzzleSerializer(serializers.ModelSerializer):
     tests = TestSerializer(many=True)
     class Meta:
@@ -27,5 +32,15 @@ class SubmissionSerializer(serializers.ModelSerializer):
 class FBUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = FBUser
-        fields = ('id', 'username')
+        fields = ('fbid',)
 
+class TestResult(object):
+    def __init__(self, test, result, user):
+        self.test = test
+        self.result = result
+        self.user = user
+
+class ResultSerializer(serializers.Serializer):
+    test = SmallTestSerializer()
+    result = serializers.IntegerField()
+    user = FBUserSerializer()

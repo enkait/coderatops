@@ -145,6 +145,27 @@ userDataService.factory('$challenges', function($resource, $cookies) {
     });
 });
 
+userDataService.factory('$instances', function($resource, $cookies) {
+    return $resource('http://localhost:8000/puzzle/instances/:id', [], {
+        get_results: {
+            method: 'GET',
+            params: {},
+            isArray: true,
+            headers: { 'Authorization' : "Token " + $cookies.authToken },
+        },
+    });
+});
+
+userDataService.factory('$submissions', function($resource, $cookies) {
+    return $resource('http://localhost:8000/puzzle/submissions/', [], {
+        create: {
+            method: 'POST',
+            params: {},
+            headers: { 'Authorization' : "Token " + $cookies.authToken },
+        },
+    });
+});
+
 var profileService = angular.module('profileService', ['userDataService']);
 
 profileService.factory('$profile', function($location, $friends, $q) {

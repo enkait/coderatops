@@ -6,4 +6,4 @@ class Challenge(models.Model):
     challenger = models.ForeignKey(FBUser, related_name="challenges_posed")
     challenged = models.ForeignKey(FBUser, related_name="challenges_received")
     message = models.CharField(max_length=200)
-    puzzle_instance = models.ForeignKey(PuzzleInstance, related_name="challenges")
+    puzzle_instance = models.OneToOneField(PuzzleInstance)

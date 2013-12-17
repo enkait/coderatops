@@ -39,5 +39,5 @@ class Submission(models.Model):
     puzzle_instance = models.ForeignKey(PuzzleInstance, related_name="submissions")
     answer = models.CharField(max_length=1000)
 
-    def ok(self):
-        return self.answer == self.test.output
+    def points(self):
+        return 1 if self.answer == self.test.output else 0
