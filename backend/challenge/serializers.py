@@ -7,6 +7,7 @@ from fblogin.serializers import ProfileSerializer
 class ChallengeSerializer(serializers.ModelSerializer):
     challenged = ProfileSerializer()
     challenger = ProfileSerializer()
+    puzzle_instance = PuzzleInstanceSerializer()
 
     class Meta:
         model = Challenge

@@ -7,8 +7,11 @@ from challenge.views import ChallengeViewSet
 class ChallengeRouter(routers.DefaultRouter):
     routes = [
         routers.Route(url=r'^{prefix}$',
-            mapping={'post': 'create'},
-            name='create',
+            mapping={
+                'post': 'create',
+                'get': 'list',
+            },
+            name='listcreate',
             initkwargs={}),
         routers.Route(url=r'^{prefix}/{lookup}$',
             mapping={'get': 'retrieve'},

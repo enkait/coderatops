@@ -1,7 +1,14 @@
 <div>
     <p>Choose an opponent:</p>
     <div class="{{challenged}}" ng-click="$event.preventDefault()" ng-repeat="friend in friends">
-        <a href="#" class="{{friend.name}}" ng-click="$parent.challenged=friend">{{friend.name}}</a>
+        <a href="#" class="{{friend.name}}" ng-click="$parent.challenged=friend">
+            <table>
+                <tr>
+                    <td><img src="{{friend.picture.data.url}}"/></td>
+                    <td>{{friend.name}}</td>
+                </tr>
+            </table>
+        </a>
     </div>
     <div>
     Type an optional message to your friend:

@@ -29,14 +29,43 @@ gameAppControllers.controller('ChallengeCtrl', function ChallengeCtrl($scope, $p
     };
 });
 
-gameAppControllers.controller('SolveChallengeCtrl', function SolveChallengeCtrl($scope, $profile, $challenges, $submissions, $routeParams, $instances, $fbLogin, $timeout) {
-    var find_predicate = function(wh, predicate) {
-        for (var i = 0; i < wh.length; i++) {
-            if (predicate(wh[i])) return wh[i];
-        }
-        return null;
-    };
+var find_predicate = function(wh, predicate) {
+    for (var i = 0; i < wh.length; i++) {
+        if (predicate(wh[i])) return wh[i];
+    }
+    return null;
+};
 
+gameAppControllers.controller('ChallengesCtrl', function ChallengeCtrl($scope, $profile, $challenges, $location) {
+    $challenges.list({}, function(challenge_list) {
+        $scope.challenge_list = challenge_list;
+
+        for (var i = 0; i < challenge_list.length; i++) {
+            var challenge = challenge_list[i];
+            $profile.get_details(challenge.challenger.fbid).then(function(ind) {
+                return function(details) {
+                    $scope.challenge_list[ind].challenger = details;
+                    if ($scope.challenge_list[ind].enemy === details.id) {
+                        $scope.challenge_list[ind].enemy_details = details;
+                    }
+                };
+            }(i));
+            $profile.get_details(challenge.challenged.fbid).then(function(ind) {
+                return function(details) {
+                    $scope.challenge_list[ind].challenged = details;
+                    if ($scope.challenge_list[ind].enemy === details.id) {
+                        $scope.challenge_list[ind].enemy_details = details;
+                    }
+                };
+            }(i));
+        }
+    }, function(response) {
+        console.log("fail");
+        console.log(response);
+    });
+});
+
+gameAppControllers.controller('SolveChallengeCtrl', function SolveChallengeCtrl($scope, $profile, $challenges, $submissions, $routeParams, $instances, $fbLogin, $timeout) {
     $scope.results = [];
 
     $scope.update_tests = function() {

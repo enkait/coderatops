@@ -17,8 +17,9 @@ class ChallengeViewSet(viewsets.ReadOnlyModelViewSet):
     model = Challenge
 
     def get_queryset(self):
-        return Challenge.objects.filter(challenger=self.request.user.pk) | \
-            Challenge.objects.filter(challenged=self.request.user.pk)
+        fbuser = FBUser.objects.get(user=self.request.user)
+        return Challenge.objects.filter(challenger=fbuser) | \
+            Challenge.objects.filter(challenged=fbuser)
 
     def create(self, request):
         serializer = ChallengeSpecSerializer(data=request.DATA)
@@ -47,3 +48,9 @@ class ChallengeViewSet(viewsets.ReadOnlyModelViewSet):
             return Response("Can't access this challenge", status=status.HTTP_400_BAD_REQUEST)
         result_serializer = ChallengeSerializer(challenge)
         return Response(result_serializer.data, status=status.HTTP_200_OK)
+
+    def list(self, request):
+        result_serializer = ChallengeSerializer(self.get_queryset(), many=True)
+        print result_serializer.data
+        return Response(result_serializer.data, status=status.HTTP_200_OK)
+

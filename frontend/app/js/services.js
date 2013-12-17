@@ -16,8 +16,6 @@ loginService.factory('$fbLogin', function($timeout, $location, $backendAuth, $co
 
         self.handler = function(response) {
             self.loginStatus = response.status;
-            console.log("handler fblogin");
-            console.log(self.loginStatus);
             if (self.isConnected()) {
                 self.connectedHandler(response);
             } else {
@@ -68,8 +66,6 @@ loginService.factory('$fbLogin', function($timeout, $location, $backendAuth, $co
             }, function(value, response) {
                 self.authToken = value.key
                 $cookies.authToken = self.authToken;
-                console.log("success");
-                console.log(self.authToken);
                 $timeout(function() {
                     $location.path(self.redirect_path);
                 });
@@ -124,7 +120,7 @@ userDataService.factory('$friends', function($resource, $cookies) {
     });
 });
 
-userDataService.factory('$challenges', function($resource, $cookies, $fbLogin) {
+userDataService.factory('$challenges', function($resource, $cookies, $fbLogin, $profile, $timeout) {
     return new function() {
         var self = this;
 
@@ -147,37 +143,71 @@ userDataService.factory('$challenges', function($resource, $cookies, $fbLogin) {
             },
         });
 
-        self.wrap_challenge = function(challenge) {
-            return new function() {
+        self.wrap_challenge = function(challenge, success_callback) {
+            var Wrapper = function(on_success) {
                 var self = this;
 
                 self.id = challenge.id;
                 self.challenger = challenge.challenger;
                 self.challenged = challenge.challenged;
+                if ($fbLogin.userID === self.challenger.fbid) {
+                    self.enemy = self.challenged;
+                } else {
+                    self.enemy = self.challenger;
+                }
+                self.is_complete = function() {
+                    return self.challenger_details && self.challenged_details;
+                };
+                $profile.get_details(self.challenger.fbid).then(function(details) {
+                    self.challenger_details = details;
+                    if (self.enemy === self.challenger) {
+                        self.enemy_details = details;
+                    }
+                    if (self.is_complete()) {
+                        on_success();
+                    }
+                });
+                $profile.get_details(self.challenged.fbid).then(function(details) {
+                    self.challenged_details = details;
+                    if (self.enemy === self.challenged) {
+                        self.enemy_details = details;
+                    }
+                    if (self.is_complete()) {
+                        on_success();
+                    }
+                });
                 self.message = challenge.message;
                 self.puzzle_instance = challenge.puzzle_instance;
-
-                if ($fbLogin.userID === self.challenger.fbid) {
-                    self.enemy = self.challenged.fbid;
-                } else {
-                    self.enemy = self.challenger.fbid;
-                }
             };
+            var wrapper = new Wrapper(function() {
+                success_callback(wrapper);
+            });
         };
 
         self.create = function(args, success, failure) {
-            console.log(self);
             return self.challenges_api.create(args, function(result) {
-                console.log(self);
-                return success(self.wrap_challenge(result));
+                self.wrap_challenge(result, success);
             }, failure);
         };
 
         self.retrieve = function(args, success, failure) {
-            console.log(self);
             return self.challenges_api.retrieve(args, function(result) {
-                console.log(self);
-                return success(self.wrap_challenge(result));
+                self.wrap_challenge(result, success);
+            }, failure);
+        };
+
+        self.list = function(args, success, failure) {
+            return self.challenges_api.list(args, function(result) {
+                var challenge_list = [];
+                var append_cb = function(obj) {
+                    challenge_list.push(obj);
+                    if (challenge_list.length === result.length) {
+                        success(challenge_list);
+                    }
+                };
+                var wrapped_results = result.map(function(obj) {
+                    return self.wrap_challenge(obj, append_cb);
+                });
             }, failure);
         };
     };
@@ -206,23 +236,64 @@ userDataService.factory('$submissions', function($resource, $cookies) {
 
 var profileService = angular.module('profileService', ['userDataService']);
 
+// todo: find a good place to put helper functions to avoid duplication
+var find_predicate = function(wh, predicate) {
+    for (var i = 0; i < wh.length; i++) {
+        if (predicate(wh[i])) return wh[i];
+    }
+    return null;
+};
+
 profileService.factory('$profile', function($location, $friends, $q) {
     return new function() {
         var self = this;
 
+        self.profile = function() {
+            var d = $q.defer();
+
+            FB.api('/me', {fields: 'name, picture'}, function(response) {
+                d.resolve(response);
+            });
+
+            return d.promise;
+        };
+
         self.connected_friends = function() {
             var d = $q.defer();
 
-            FB.api('/me/friends', {fields: 'name'}, function(response) {
+            FB.api('/me/friends', {fields: 'name, picture'}, function(response) {
                 $friends.friends({}, function(conn_friends) {
                     var indices = conn_friends.map(function(friend) {
-                        console.log(friend);
                         return friend.fbid;
                     });
                     var friends = response.data.filter(function(element) {
                         return indices.indexOf(element.id) != -1;
                     });
                     d.resolve(friends);
+                });
+            });
+
+            return d.promise;
+        };
+
+        self.get_details = function(fbid) {
+            var d = $q.defer();
+
+            // todo: cache
+            self.connected_friends().then(function(friends) {
+                var details = find_predicate(friends, function(friend) {
+                    return friend.id == fbid;
+                });
+                if (details) {
+                    d.resolve(details);
+                    return;
+                }
+                self.profile().then(function(profile) {
+                    if (profile.id === fbid) {
+                        d.resolve(profile);
+                        return;
+                    }
+                    d.reject("no such fbid known");
                 });
             });
 

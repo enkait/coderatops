@@ -20,11 +20,13 @@ class PuzzleSerializer(serializers.ModelSerializer):
         fields = ('id', 'title', 'statement', 'tests')
 
 class PuzzleInstanceSerializer(serializers.ModelSerializer):
+    tests = TestSerializer(many=True)
     class Meta:
         model = PuzzleInstance
         fields = ('id', 'puzzle', 'tests')
 
 class SubmissionSerializer(serializers.ModelSerializer):
+    test = SmallTestSerializer()
     class Meta:
         model = Submission
         fields = ('id', 'test', 'puzzle_instance', 'answer')
