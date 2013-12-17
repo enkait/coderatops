@@ -7,3 +7,7 @@ class Challenge(models.Model):
     challenged = models.ForeignKey(FBUser, related_name="challenges_received")
     message = models.CharField(max_length=200)
     puzzle_instance = models.OneToOneField(PuzzleInstance)
+
+    def __unicode__(self):
+        return "%s: %s vs %s" % (unicode(self.pk),
+                unicode(self.challenger.fbid), unicode(self.challenged.fbid))

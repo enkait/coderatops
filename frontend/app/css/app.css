@@ -42,10 +42,26 @@
     text-decoration: none;
 }
 
+.test .test_none {
+    background-color: #6694FE;
+}
+
 .test .test_ok {
     background-color: #96E74A;
 }
 
 .test .test_fail {
     background-color: #ED3245;
+}
+
+.test .test_enemy_none {
+    background-color: #B0548C;
+}
+
+.test .test_enemy_ok {
+    background-color: #B0548C;
+}
+
+.test .test_enemy_fail {
+    background-color: #B0548C;
 }

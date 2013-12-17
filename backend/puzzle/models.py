@@ -7,6 +7,9 @@ class Puzzle(models.Model):
     statement = models.CharField(max_length=100000)
     creator = models.ForeignKey(FBUser, related_name="puzzles_created")
 
+    def __unicode__(self):
+        return unicode(self.title)
+
 class Test(models.Model):
     DIFFICULTY_CHOICES = (
         ("easy", "easy"),
@@ -18,6 +21,9 @@ class Test(models.Model):
     input = models.CharField(max_length=1000)
     output = models.CharField(max_length=1000)
     difficulty = models.CharField(max_length=100, choices=DIFFICULTY_CHOICES)
+
+    def __unicode__(self):
+        return "%s: %s" % (unicode(self.puzzle), unicode(self.input))
 
 class PuzzleInstance(models.Model):
     puzzle = models.ForeignKey(Puzzle, related_name="puzzle_instances")

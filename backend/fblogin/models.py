@@ -26,6 +26,9 @@ class FBUser(models.Model):
         self.user = user
         super(FBUser, self).save(*args, **kwargs)
 
+    def __unicode__(self):
+        return unicode(self.fbid)
+
 @receiver(post_save, sender=User)
 def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:

@@ -9,7 +9,7 @@
                     {{test.input}}
                 </td>
             </tr>
-            <tr ng-class="{test_fail : test.attempted_by_user}" ng-hide="test.solved_by_user">
+            <tr ng-class="{test_none : !test.attempted_by_user, test_fail : test.attempted_by_user}" ng-hide="test.solved_by_user">
                 <td>
                     <input ng-model="output"/>
                     <button ng-click="$parent.submit(test.id, output)">Submit</button>
@@ -21,13 +21,13 @@
                 </td>
             </tr>
             <tr>
-                <td ng-show="!test.attempted_by_enemy">
+                <td class="test_enemy_none" ng-show="!test.attempted_by_enemy">
                     Your opponent hasn't attempted this yet.
                 </td>
-                <td class="test_fail" ng-show="test.attempted_by_enemy">
-                    Your opponent hasn't attempted this yet.
+                <td class="test_enemy_fail" ng-show="test.attempted_by_enemy && !test.solved_by_enemy">
+                    Your opponent has some failed attempts.
                 </td>
-                <td class="test_ok" ng-show="test.solved_by_enemy">
+                <td class="test_enemy_ok" ng-show="test.solved_by_enemy">
                     Your opponent has solved this test case!
                 </td>
             </tr>
