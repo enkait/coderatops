@@ -151,6 +151,7 @@ userDataService.factory('$challenges', function($resource, $cookies, $fbLogin) {
             return new function() {
                 var self = this;
 
+                self.id = challenge.id;
                 self.challenger = challenge.challenger;
                 self.challenged = challenge.challenged;
                 self.message = challenge.message;

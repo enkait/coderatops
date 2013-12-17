@@ -99,11 +99,14 @@ gameAppControllers.controller('SolveChallengeCtrl', function SolveChallengeCtrl(
         $scope.update_tests();
         $scope.test_updater = function() {
             $scope.update_tests();
-            $scope.current_timeout_promise = $timeout($scope.test_updater, 2000);
+            if ($scope.current_timeout_promise) {
+                $scope.current_timeout_promise = $timeout($scope.test_updater, 2000);
+            }
         };
         $scope.current_timeout_promise = $timeout($scope.test_updater, 2000);
         $scope.$on('$destroy', function(){
             $timeout.cancel($scope.current_timeout_promise);
+            $scope.current_timeout_promise = null;
         });
     }, function(response) {
         console.log("Failed to get challenge");
