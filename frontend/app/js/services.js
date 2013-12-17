@@ -124,46 +124,83 @@ userDataService.factory('$friends', function($resource, $cookies) {
     });
 });
 
-userDataService.factory('$challenges', function($resource, $cookies) {
-    return $resource('http://localhost:8000/challenge/challenges/:id', [], {
-        create: {
-            method: 'POST',
+userDataService.factory('$challenges', function($resource, $cookies, $fbLogin) {
+    return new function() {
+        var self = this;
+
+        self.challenges_api = $resource('http://localhost:8000/challenge/challenges/:id', [], {
+            create: {
+                method: 'POST',
             params: {},
             headers: { 'Authorization' : "Token " + $cookies.authToken },
-        },
-        list: {
-            method: 'GET',
+            },
+            list: {
+                method: 'GET',
             params: {},
             isArray: true,
             headers: { 'Authorization' : "Token " + $cookies.authToken },
-        },
-        retrieve: {
-            method: 'GET',
+            },
+            retrieve: {
+                method: 'GET',
             params: {},
             headers: { 'Authorization' : "Token " + $cookies.authToken },
-        },
-    });
+            },
+        });
+
+        self.wrap_challenge = function(challenge) {
+            return new function() {
+                var self = this;
+
+                self.challenger = challenge.challenger;
+                self.challenged = challenge.challenged;
+                self.message = challenge.message;
+                self.puzzle_instance = challenge.puzzle_instance;
+
+                if ($fbLogin.userID === self.challenger.fbid) {
+                    self.enemy = self.challenged.fbid;
+                } else {
+                    self.enemy = self.challenger.fbid;
+                }
+            };
+        };
+
+        self.create = function(args, success, failure) {
+            console.log(self);
+            return self.challenges_api.create(args, function(result) {
+                console.log(self);
+                return success(self.wrap_challenge(result));
+            }, failure);
+        };
+
+        self.retrieve = function(args, success, failure) {
+            console.log(self);
+            return self.challenges_api.retrieve(args, function(result) {
+                console.log(self);
+                return success(self.wrap_challenge(result));
+            }, failure);
+        };
+    };
 });
 
 userDataService.factory('$instances', function($resource, $cookies) {
     return $resource('http://localhost:8000/puzzle/instances/:id', [], {
         get_results: {
             method: 'GET',
-            params: {},
-            isArray: true,
-            headers: { 'Authorization' : "Token " + $cookies.authToken },
+           params: {},
+           isArray: true,
+           headers: { 'Authorization' : "Token " + $cookies.authToken },
         },
-    });
+        });
 });
 
 userDataService.factory('$submissions', function($resource, $cookies) {
     return $resource('http://localhost:8000/puzzle/submissions/', [], {
         create: {
             method: 'POST',
-            params: {},
-            headers: { 'Authorization' : "Token " + $cookies.authToken },
+           params: {},
+           headers: { 'Authorization' : "Token " + $cookies.authToken },
         },
-    });
+        });
 });
 
 var profileService = angular.module('profileService', ['userDataService']);

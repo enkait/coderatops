@@ -11,21 +11,16 @@ gameAppControllers.controller('PuzzleInstanceCtrl', function PuzzleInstanceCtrl(
 });
 
 gameAppControllers.controller('ChallengeCtrl', function ChallengeCtrl($scope, $profile, $challenges, $location) {
-    console.log("Challenged:");
-    console.log($scope.challenged);
     $profile.connected_friends().then(function(friends) {
         $scope.friends = friends;
     });
 
     $scope.challenge = function(friend, message) {
         message = message || "";
-        console.log(friend);
-        console.log(message);
         $challenges.create({
             challenged: friend.id,
             message: message,
         }, function(challenge) {
-            console.log("success");
             $location.path('/challenge/' + challenge.id);
         }, function(response) {
             console.log("fail");
@@ -34,16 +29,13 @@ gameAppControllers.controller('ChallengeCtrl', function ChallengeCtrl($scope, $p
     };
 });
 
-var find_predicate = function(wh, predicate) {
-    for (int i = 0; i < wh.length; i++) {
-        if (predicate(wh[i])) return wh[i];
-    }
-    return null;
-};
-
-gameAppControllers.controller('SolveChallengeCtrl', function SolveChallengeCtrl($scope, $profile, $challenges, $submissions, $routeParams, $instances, $fblogin) {
-    console.log("Challenge:");
-    console.log($routeParams.challengeid);
+gameAppControllers.controller('SolveChallengeCtrl', function SolveChallengeCtrl($scope, $profile, $challenges, $submissions, $routeParams, $instances, $fbLogin) {
+    var find_predicate = function(wh, predicate) {
+        for (var i = 0; i < wh.length; i++) {
+            if (predicate(wh[i])) return wh[i];
+        }
+        return null;
+    };
 
     $scope.results = [];
 
@@ -53,22 +45,27 @@ gameAppControllers.controller('SolveChallengeCtrl', function SolveChallengeCtrl(
         }, function(results) {
             var tests = $scope.challenge.puzzle_instance.tests;
             var test_list = [];
-            for (int i = 0; i < tests.length; i++) {
-                test_list.add(new function() {
+            for (var i = 0; i < tests.length; i++) {
+                test_list.push(new function() {
                     var self = this;
                     self.id = tests[i].id;
                     self.input = tests[i].input;
-                    self.solved_by_user = find_predicate(results, function(test) {
-                        return test.id === self.id && test.user.fbid === $fblogin.userID;
+                    var enemy = $scope.challenge.enemy;
+                    self.solved_by_user = null !== find_predicate(results, function(test) {
+                        return test.test.id === self.id && test.user.fbid === $fbLogin.userID && test.result > 0;
                     });
-                    self.solved_by_enemy = find_predicate(results, function(test) {
-                        return test.id === self.id && test.user.fbid !== $fblogin.userID;
+                    self.solved_by_enemy = null !== find_predicate(results, function(test) {
+                        return test.test.id === self.id && test.user.fbid === enemy && test.result > 0;
+                    });
+                    self.attempted_by_user = null !== find_predicate(results, function(test) {
+                        return test.test.id === self.id && test.user.fbid === $fbLogin.userID;
+                    });
+                    self.attempted_by_enemy = null !== find_predicate(results, function(test) {
+                        return test.test.id === self.id && test.user.fbid === enemy;
                     });
                 });
             }
-            console.log(test_list);
             $scope.tests = test_list;
-            console.log(results);
         }, function(response) {
             console.log("fail");
             console.log(response);
@@ -81,22 +78,18 @@ gameAppControllers.controller('SolveChallengeCtrl', function SolveChallengeCtrl(
             puzzle_instance: $scope.challenge.puzzle_instance.id,
             answer: output,
         }, function(result) {
-            console.log("win");
-            $scope.update_results();
+            $scope.update_tests();
         }, function(response) {
             console.log("fail");
             console.log(response);
         });
-        console.log(test_id, output);
     };
 
     $challenges.retrieve({id : $routeParams.challengeid}, function(challenge) {
-            console.log("Succeeded in getting challenge");
-            console.log(challenge);
-            $scope.challenge = challenge;
-            $scope.update_tests();
-        }, function(response) {
-            console.log("Failed to get challenge");
-            console.log(response);
+        $scope.challenge = challenge;
+        $scope.update_tests();
+    }, function(response) {
+        console.log("Failed to get challenge");
+        console.log(response);
     });
 });

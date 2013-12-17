@@ -30,7 +30,7 @@
 }
 
 .test {
-    background-color: #5AB5ED;
+    background-color: #6694FE;
     border-spacing: 5pt 5pt;
     border-collapse: separate;
     color: white;
@@ -40,4 +40,12 @@
 
 .test a {
     text-decoration: none;
+}
+
+.test .test_ok {
+    background-color: #96E74A;
+}
+
+.test .test_fail {
+    background-color: #ED3245;
 }

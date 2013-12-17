@@ -1,7 +1,7 @@
 <div>
     <p>{{challenge.puzzle_instance.puzzle.title}}</p>
     <p>{{challenge.puzzle_instance.puzzle.statement}}</p>
-    <div ng-click="$event.preventDefault()" ng-repeat="test in challenge.puzzle_instance.tests">
+    <div ng-click="$event.preventDefault()" ng-repeat="test in tests">
         <p>
         <table class="test">
             <tr>
@@ -9,16 +9,26 @@
                     {{test.input}}
                 </td>
             </tr>
-            <tr>
-                <td ng-show="!solved">
+            <tr ng-class="{test_fail : test.attempted_by_user}" ng-hide="test.solved_by_user">
+                <td>
                     <input ng-model="output"/>
                     <button ng-click="$parent.submit(test.id, output)">Submit</button>
                 </td>
-                <td ng-show="solved && user_won">
+            </tr>
+            <tr class="test_ok" ng-show="test.solved_by_user">
+                <td>
                     You've solved this test case correctly!
                 </td>
-                <td ng-show="solved && !user_won">
-                    Your opponent has solved this test case first!
+            </tr>
+            <tr>
+                <td ng-show="!test.attempted_by_enemy">
+                    Your opponent hasn't attempted this yet.
+                </td>
+                <td class="test_fail" ng-show="test.attempted_by_enemy">
+                    Your opponent hasn't attempted this yet.
+                </td>
+                <td class="test_ok" ng-show="test.solved_by_enemy">
+                    Your opponent has solved this test case!
                 </td>
             </tr>
         </table>
