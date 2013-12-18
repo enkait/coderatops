@@ -1,8 +1,8 @@
 <div>
     <p>Select a challenge:</p>
-    <div ng-click="$event.preventDefault()" ng-repeat="challenge in challenge_list">
-        <div class="challenge" class="{{friend.name}}">
-            <table ng-click="$parent.open_challenge(challenge)">
+    <div ng-repeat="challenge in challenge_list">
+        <div class="challenge" ng-click="$parent.open_challenge(challenge)">
+            <table>
                 <tr>
                     <td><img src="{{challenge.enemy_details.picture.data.url}}"/></td>
                     <td>{{challenge.enemy_details.name}}</td>
