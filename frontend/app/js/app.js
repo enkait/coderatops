@@ -32,12 +32,6 @@ gameApp.config(['$routeProvider', function($routeProvider) {
     });
 }]);
 
-var update_true_path = function($rootScope, cur_path) {
-    console.log("updating");
-    console.log(cur_path);
-    console.log($rootScope.true_path);
-};
-
 gameApp.run(function($rootScope, $fbLogin, $location) {
     $rootScope.$on('$routeChangeStart', function(event, next, current) {
         var cur_path = $location.path();

@@ -7,3 +7,9 @@ gameAppDirectives.directive("fbMarkup", function($rootScope) {
         FB.XFBML.parse(iElement[0]);
     };
 });
+
+gameAppDirectives.directive("navbar", function() {
+    return {
+        templateUrl: "partials/navbar.html",
+    }; 
+});

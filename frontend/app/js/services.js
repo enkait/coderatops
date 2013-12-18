@@ -22,6 +22,7 @@ loginService.factory('$fbLogin', function($timeout, $location, $backendAuth, $co
                 self.disconnectedHandler(response);
             }
             $timeout(function() {
+                console.log("redirecting to", self.redirect_path);
                 $location.path(self.redirect_path);
             });
             //self.runHandlers();
@@ -67,6 +68,7 @@ loginService.factory('$fbLogin', function($timeout, $location, $backendAuth, $co
                 self.authToken = value.key
                 $cookies.authToken = self.authToken;
                 $timeout(function() {
+                    console.log("redirecting to", self.redirect_path);
                     $location.path(self.redirect_path);
                 });
             }, function(response) {

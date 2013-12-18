@@ -5,8 +5,11 @@
         <title>My AngularJS App</title>
         <link rel="stylesheet" href="css/app.css"/>
     </head>
-    <body>
+    <body class="all">
         <div id="fb-root"></div>
+        <div ng-controller="NavBarCtrl">
+            <div navbar></div>
+        </div>
         <div ng-view></div>
 
         <!-- In production use:

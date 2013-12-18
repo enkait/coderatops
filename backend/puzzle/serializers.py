@@ -21,6 +21,7 @@ class PuzzleSerializer(serializers.ModelSerializer):
 
 class PuzzleInstanceSerializer(serializers.ModelSerializer):
     tests = TestSerializer(many=True)
+    puzzle = PuzzleSerializer()
     class Meta:
         model = PuzzleInstance
         fields = ('id', 'puzzle', 'tests')

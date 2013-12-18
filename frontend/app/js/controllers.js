@@ -21,7 +21,7 @@ gameAppControllers.controller('ChallengeCtrl', function ChallengeCtrl($scope, $p
             challenged: friend.id,
             message: message,
         }, function(challenge) {
-            $location.path('/challenge/' + challenge.id);
+            $location.path("/challenge/" + challenge.id);
         }, function(response) {
             console.log("fail");
             console.log(response);
@@ -44,6 +44,13 @@ gameAppControllers.controller('ChallengesCtrl', function ChallengeCtrl($scope, $
         console.log("fail");
         console.log(response);
     });
+
+    $scope.open_challenge = function(challenge) {
+        console.log(challenge);
+        console.log("wtf");
+        console.log($location.path());
+        $location.path("/challenge/" + challenge.id);
+    };
 });
 
 gameAppControllers.controller('SolveChallengeCtrl', function SolveChallengeCtrl($scope, $profile, $challenges, $submissions, $routeParams, $instances, $fbLogin, $timeout) {
@@ -65,13 +72,13 @@ gameAppControllers.controller('SolveChallengeCtrl', function SolveChallengeCtrl(
                         return test.test.id === self.id && test.user.fbid === $fbLogin.userID && test.result > 0;
                     });
                     self.solved_by_enemy = null !== find_predicate(results, function(test) {
-                        return test.test.id === self.id && test.user.fbid === enemy && test.result > 0;
+                        return test.test.id === self.id && test.user.fbid === enemy.fbid && test.result > 0;
                     });
                     self.attempted_by_user = null !== find_predicate(results, function(test) {
                         return test.test.id === self.id && test.user.fbid === $fbLogin.userID;
                     });
                     self.attempted_by_enemy = null !== find_predicate(results, function(test) {
-                        return test.test.id === self.id && test.user.fbid === enemy;
+                        return test.test.id === self.id && test.user.fbid === enemy.fbid;
                     });
                 });
             }
@@ -115,6 +122,7 @@ gameAppControllers.controller('SolveChallengeCtrl', function SolveChallengeCtrl(
         };
         $scope.current_timeout_promise = $timeout($scope.test_updater, 2000);
         $scope.$on('$destroy', function(){
+            console.log("DESTROY");
             $timeout.cancel($scope.current_timeout_promise);
             $scope.current_timeout_promise = null;
         });
@@ -122,4 +130,19 @@ gameAppControllers.controller('SolveChallengeCtrl', function SolveChallengeCtrl(
         console.log("Failed to get challenge");
         console.log(response);
     });
+});
+
+gameAppControllers.controller('NavBarCtrl', function SolveChallengeCtrl($scope, $location) {
+    $scope.go_to = function(path) {
+        $location.path(path);
+    };
+    $scope.paths = [
+        {
+            name: "CHALLENGES",
+            location: "/challenges/",
+        }, {
+            name: "CREATE",
+            location: "/challenge/",
+        },
+    ];
 });
