@@ -81,27 +81,28 @@
     font-size: 200%;
     color: white;
     font-weight: bold;
-    padding: 0px;
-    border: 0px;
-}
-
-.navtr {
-    width: 50%;
-    padding: 0px;
-    border: 0px;
-    margin: 0px;
 }
 
 .navcell {
+    display: inline-block;
+    padding-top: 10px;
+    padding-bottom: 10px;
     width: 50%;
-    padding: 0px;
-    border: 0px;
-    margin: 0px;
+    height: 60%;
 }
 
 .navcell:hover {
     background-color: #D492FC;
     cursor: pointer;
+}
+
+.selectednavcell {
+    background-color: #A9BDD6;
+}
+
+.selectednavcell:hover {
+    background-color: #A9BDD6;
+    cursor: auto;
 }
 
 .newchallenged:hover {

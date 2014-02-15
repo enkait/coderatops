@@ -1,11 +1,7 @@
-<div>
-    <table class="navtable">
-        <tr class="navtr">
-            <td class="navcell" ng-repeat="path in paths">
-                <div ng-click="$parent.go_to(path.location)">
-                    {{path.name}}
-                </div>
-            </td>
-        </tr>
-    </table>
+<div class="navtable">
+    <div ng-repeat="path in paths" class="navcell" ng-class="{selectednavcell: path.location === $parent.current()}">
+        <div ng-click="$parent.go_to(path.location)">
+            {{path.name}}
+        </div>
+    </div>
 </div>

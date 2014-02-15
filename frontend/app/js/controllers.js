@@ -136,6 +136,9 @@ gameAppControllers.controller('NavBarCtrl', function SolveChallengeCtrl($scope, 
     $scope.go_to = function(path) {
         $location.path(path);
     };
+    $scope.current = function() {
+        return $location.path();
+    };
     $scope.paths = [
         {
             name: "CHALLENGES",
