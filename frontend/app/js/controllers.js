@@ -1,6 +1,6 @@
 'use strict';
 
-var gameAppControllers = angular.module('gameAppControllers', ['ngResource', 'loginService', 'profileService']);
+var gameAppControllers = angular.module('gameAppControllers', ['ngResource', 'loginService', 'profileService', 'backendProvider']);
 
 gameAppControllers.controller('PuzzleInstanceCtrl', function PuzzleInstanceCtrl($scope, $http, $fbLogin, $cookies, $profile, $backend) {
     $http.get($backend + '/puzzle/puzzles/.json').success(

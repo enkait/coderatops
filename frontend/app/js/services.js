@@ -1,6 +1,6 @@
 'use strict';
 
-var loginService = angular.module('loginService', []);
+var loginService = angular.module('loginService', ['backendProvider']);
 
 loginService.factory('$fbLogin', function($timeout, $location, $backendAuth, $cookies, $rootScope) {
     return new function() {
@@ -109,7 +109,7 @@ loginService.factory('$backendAuth', function($resource, $backend) {
     });
 });
 
-var userDataService = angular.module('userDataService', []);
+var userDataService = angular.module('userDataService', ['backendProvider']);
 
 userDataService.factory('$friends', function($resource, $cookies, $backend) {
     return $resource($backend + '/fblogin/profile/friends/', [], {
@@ -201,6 +201,10 @@ userDataService.factory('$challenges', function($resource, $cookies, $fbLogin, $
         self.list = function(args, success, failure) {
             return self.challenges_api.list(args, function(result) {
                 var challenge_list = [];
+                if (result.length === 0) { //will never call append_cb otherwise
+                    success(challenge_list);
+                    return;
+                }
                 var append_cb = function(obj) {
                     challenge_list.push(obj);
                     if (challenge_list.length === result.length) {
@@ -234,6 +238,12 @@ userDataService.factory('$submissions', function($resource, $cookies, $backend) 
            headers: { 'Authorization' : "Token " + $cookies.authToken },
         },
         });
+});
+
+var backendProvider = angular.module('backendProvider', []);
+
+backendProvider.factory('$backend', function($location) {
+    return 'http://' + $location.host() + ':8000';
 });
 
 var profileService = angular.module('profileService', ['userDataService']);
