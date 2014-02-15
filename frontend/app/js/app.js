@@ -12,6 +12,8 @@ gameApp.config(['$httpProvider', function($httpProvider) {
 }
 ]);
 
+gameApp.constant('$backend', 'http://localhost:8000');
+
 gameApp.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when("/login/", {
         templateUrl: 'partials/login.html',

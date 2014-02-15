@@ -99,8 +99,8 @@ loginService.factory('$fbLogin', function($timeout, $location, $backendAuth, $co
     };
 });
 
-loginService.factory('$backendAuth', function($resource) {
-    return $resource('http://localhost:8000/fblogin/fblogin/', [], {
+loginService.factory('$backendAuth', function($resource, $backend) {
+    return $resource($backend + '/fblogin/fblogin/', [], {
         login: {
             method: 'POST',
             params: {},
@@ -111,8 +111,8 @@ loginService.factory('$backendAuth', function($resource) {
 
 var userDataService = angular.module('userDataService', []);
 
-userDataService.factory('$friends', function($resource, $cookies) {
-    return $resource('http://localhost:8000/fblogin/profile/friends/', [], {
+userDataService.factory('$friends', function($resource, $cookies, $backend) {
+    return $resource($backend + '/fblogin/profile/friends/', [], {
         friends: {
             method: 'GET',
             params: {},
@@ -122,11 +122,11 @@ userDataService.factory('$friends', function($resource, $cookies) {
     });
 });
 
-userDataService.factory('$challenges', function($resource, $cookies, $fbLogin, $profile, $timeout) {
+userDataService.factory('$challenges', function($resource, $cookies, $fbLogin, $profile, $timeout, $backend) {
     return new function() {
         var self = this;
 
-        self.challenges_api = $resource('http://localhost:8000/challenge/challenges/:id', [], {
+        self.challenges_api = $resource($backend + '/challenge/challenges/:id', [], {
             create: {
                 method: 'POST',
             params: {},
@@ -215,8 +215,8 @@ userDataService.factory('$challenges', function($resource, $cookies, $fbLogin, $
     };
 });
 
-userDataService.factory('$instances', function($resource, $cookies) {
-    return $resource('http://localhost:8000/puzzle/instances/:id', [], {
+userDataService.factory('$instances', function($resource, $cookies, $backend) {
+    return $resource($backend + '/puzzle/instances/:id', [], {
         get_results: {
             method: 'GET',
            params: {},
@@ -226,8 +226,8 @@ userDataService.factory('$instances', function($resource, $cookies) {
         });
 });
 
-userDataService.factory('$submissions', function($resource, $cookies) {
-    return $resource('http://localhost:8000/puzzle/submissions/', [], {
+userDataService.factory('$submissions', function($resource, $cookies, $backend) {
+    return $resource($backend + '/puzzle/submissions/', [], {
         create: {
             method: 'POST',
            params: {},
