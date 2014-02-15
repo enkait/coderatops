@@ -11,6 +11,7 @@ from rest_framework.views import APIView
 from rest_framework.decorators import action, link
 from rest_framework.response import Response
 from rest_framework import status
+import traceback
 
 class ChallengeViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = ((IsAuthenticated, ))
@@ -36,7 +37,7 @@ class ChallengeViewSet(viewsets.ReadOnlyModelViewSet):
                 challenge.save()
                 result_serializer = ChallengeSerializer(challenge)
             except Exception as ex:
-                print ex
+                traceback.print_exc()
             return Response(result_serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
