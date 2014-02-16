@@ -27,9 +27,13 @@ gameApp.config(['$routeProvider', function($routeProvider) {
         templateUrl: 'partials/solve_challenge.html',
         controller: 'SolveChallengeCtrl',
     }).when("/", {
-        templateUrl: 'partials/instance.html',
-        controller: 'PuzzleInstanceCtrl',
+        templateUrl: 'partials/challenges.html',
+        controller: 'ChallengesCtrl',
     });
+    //}).when("/", {
+    //    templateUrl: 'partials/instance.html',
+    //    controller: 'PuzzleInstanceCtrl',
+    //});
 }]);
 
 gameApp.run(function($rootScope, $fbLogin, $location) {
