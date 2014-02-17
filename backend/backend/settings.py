@@ -109,6 +109,7 @@ REST_FRAMEWORK = {
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = (
     'localhost:8080',
+    'ec2-54-201-239-136.us-west-2.compute.amazonaws.com',
 )
 CORS_ALLOW_HEADERS = (
     'x-requested-with',
