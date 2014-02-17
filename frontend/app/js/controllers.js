@@ -1,6 +1,6 @@
 'use strict';
 
-var gameAppControllers = angular.module('gameAppControllers', ['ngResource', 'loginService', 'profileService', 'backendProvider']);
+var gameAppControllers = angular.module('gameAppControllers', ['ngResource', 'loginService', 'profileService', 'backendProvider', 'messageService']);
 
 gameAppControllers.controller('PuzzleInstanceCtrl', function PuzzleInstanceCtrl($scope, $http, $fbLogin, $cookies, $profile, $backend) {
     $http.get($backend + '/puzzle/puzzles/.json').success(
@@ -36,7 +36,7 @@ var find_predicate = function(wh, predicate) {
     return null;
 };
 
-gameAppControllers.controller('ChallengesCtrl', function ChallengeCtrl($scope, $profile, $challenges, $location) {
+gameAppControllers.controller('ChallengesCtrl', function ChallengeCtrl($scope, $profile, $challenges, $location, $pubsub) {
     $challenges.list({}, function(challenge_list) {
         $scope.challenge_list = challenge_list;
         console.log($scope.challenge_list);

@@ -313,3 +313,13 @@ profileService.factory('$profile', function($location, $friends, $q) {
         };
     };
 });
+
+var messageService = angular.module('messageService', []);
+
+messageService.factory('$pubsub', function() {
+    return new function() {
+        var self = this;
+
+        self.socket = new Websocket('ec2-54-201-239-136.us-west-2.compute.amazonaws.com:6379');
+    };
+});
