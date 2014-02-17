@@ -246,6 +246,10 @@ backendProvider.factory('$backend', function($location) {
     return 'http://' + $location.host() + ':8000';
 });
 
+backendProvider.factory('$ws', function($location) {
+    return 'ws://' + $location.host() + ':6379/ws';
+});
+
 var profileService = angular.module('profileService', ['userDataService']);
 
 // todo: find a good place to put helper functions to avoid duplication
@@ -314,12 +318,31 @@ profileService.factory('$profile', function($location, $friends, $q) {
     };
 });
 
-var messageService = angular.module('messageService', []);
+var messageService = angular.module('messageService', ['backendProvider']);
 
-messageService.factory('$pubsub', function() {
+messageService.factory('$pubsub', function($ws) {
     return new function() {
         var self = this;
 
-        self.socket = new Websocket('ec2-54-201-239-136.us-west-2.compute.amazonaws.com:6379');
+        self.socket = new WebSocket($ws);
+
+        self.socket.onopen = function() {
+            console.log("Opened yay");
+            self.socket.send("wut");
+        };
+
+        self.socket.onerror = function(e) {
+            console.log("Error", e);
+        };
+
+        self.socket.onmessage = function(e) {
+            console.log("Received", e);
+        };
+
+        self.socket.onclose = function(e) {
+            console.log("Closed", e);
+        };
+
+        //self.socket.send('wut');
     };
 });

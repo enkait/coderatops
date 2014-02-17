@@ -51,6 +51,8 @@ gameAppControllers.controller('ChallengesCtrl', function ChallengeCtrl($scope, $
         console.log($location.path());
         $location.path("/challenge/" + challenge.id);
     };
+
+    console.log($pubsub.socket);
 });
 
 gameAppControllers.controller('SolveChallengeCtrl', function SolveChallengeCtrl($scope, $profile, $challenges, $submissions, $routeParams, $instances, $fbLogin, $timeout) {
