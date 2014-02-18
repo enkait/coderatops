@@ -186,6 +186,23 @@ userDataService.factory('$challenges', function($resource, $cookies, $fbLogin, $
             });
         };
 
+        self.wrap_challenge_list = function(challenge_list, success_callback) {
+            var wrapped_challenge_list = [];
+            if (challenge_list.length === 0) { //will never call append_cb otherwise
+                success_callback(wrapped_challenge_list);
+                return;
+            }
+            var append_cb = function(obj) {
+                wrapped_challenge_list.push(obj);
+                if (wrapped_challenge_list.length === challenge_list.length) {
+                    success_callback(wrapped_challenge_list);
+                }
+            };
+            var wrapped_results = challenge_list.map(function(obj) {
+                return self.wrap_challenge(obj, append_cb);
+            });
+        };
+
         self.create = function(args, success, failure) {
             return self.challenges_api.create(args, function(result) {
                 self.wrap_challenge(result, success);
@@ -200,20 +217,7 @@ userDataService.factory('$challenges', function($resource, $cookies, $fbLogin, $
 
         self.list = function(args, success, failure) {
             return self.challenges_api.list(args, function(result) {
-                var challenge_list = [];
-                if (result.length === 0) { //will never call append_cb otherwise
-                    success(challenge_list);
-                    return;
-                }
-                var append_cb = function(obj) {
-                    challenge_list.push(obj);
-                    if (challenge_list.length === result.length) {
-                        success(challenge_list);
-                    }
-                };
-                var wrapped_results = result.map(function(obj) {
-                    return self.wrap_challenge(obj, append_cb);
-                });
+                return self.wrap_challenge_list(result, success);
             }, failure);
         };
     };
@@ -246,8 +250,8 @@ backendProvider.factory('$backend', function($location) {
     return 'http://' + $location.host() + ':8000';
 });
 
-backendProvider.factory('$ws', function($location) {
-    return 'ws://' + $location.host() + ':6379/ws';
+backendProvider.factory('$ws', function($location, $cookies) {
+    return 'ws://' + $location.host() + ':6379/ws/' + $cookies.authToken;
 });
 
 var profileService = angular.module('profileService', ['userDataService']);
@@ -318,13 +322,31 @@ profileService.factory('$profile', function($location, $friends, $q) {
     };
 });
 
-var messageService = angular.module('messageService', ['backendProvider']);
+var messageService = angular.module('messageService', ['backendProvider', 'userDataService']);
 
-messageService.factory('$pubsub', function($ws) {
+messageService.factory('$pubsub', function($ws, $challenges) {
+    // TODO: don't constantly create new connections
     return new function() {
         var self = this;
 
         self.socket = new WebSocket($ws);
+
+        self.handlers = [];
+
+        self.sub = function(handler) {
+            console.log("Subscribe");
+            self.handlers.push(handler);
+        };
+
+        self.unsub = function(handler) {
+            console.log("Unsubscribe");
+            var pos = self.handlers.indexOf(handler);
+            if (pos >= -1) {
+                self.handlers.splice(pos, 1);
+            } else {
+                console.log("No such handler");
+            }
+        };
 
         self.socket.onopen = function() {
             console.log("Opened yay");
@@ -336,13 +358,18 @@ messageService.factory('$pubsub', function($ws) {
         };
 
         self.socket.onmessage = function(e) {
-            console.log("Received", e);
+            var obj = JSON.parse(e.data);
+            $challenges.wrap_challenge_list(obj.payload, function(wrapped_challenge_list) {
+                obj.payload = wrapped_challenge_list;
+                console.log("Received", obj);
+                for (var i = 0; i < self.handlers.length; i++) {
+                    self.handlers[i](obj);
+                }
+            });
         };
 
         self.socket.onclose = function(e) {
             console.log("Closed", e);
         };
-
-        //self.socket.send('wut');
     };
 });

@@ -11,7 +11,9 @@ from rest_framework.views import APIView
 from rest_framework.decorators import action, link
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.authtoken.models import Token
 import traceback
+from pubsub.pubsub import pub_sub_finder
 
 class ChallengeViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = ((IsAuthenticated, ))
@@ -19,8 +21,8 @@ class ChallengeViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         fbuser = FBUser.objects.get(user=self.request.user)
-        return Challenge.objects.filter(challenger=fbuser) | \
-            Challenge.objects.filter(challenged=fbuser)
+        return Challenge.objects.filter(challenger=fbuser).order_by('pk') | \
+            Challenge.objects.filter(challenged=fbuser).order_by('pk')
 
     def create(self, request):
         serializer = ChallengeSpecSerializer(data=request.DATA)
@@ -36,6 +38,7 @@ class ChallengeViewSet(viewsets.ReadOnlyModelViewSet):
                         message=message, puzzle_instance=puzzle_instance)
                 challenge.save()
                 result_serializer = ChallengeSerializer(challenge)
+                self.publish_list(request.user)
             except Exception as ex:
                 traceback.print_exc()
             return Response(result_serializer.data, status=status.HTTP_201_CREATED)
@@ -55,3 +58,8 @@ class ChallengeViewSet(viewsets.ReadOnlyModelViewSet):
         print result_serializer.data
         return Response(result_serializer.data, status=status.HTTP_200_OK)
 
+    def publish_list(self, user):
+        token = Token.objects.get(user=user)
+        result_serializer = ChallengeSerializer(self.get_queryset(), many=True)
+        print result_serializer.data
+        pub_sub_finder.get(str(token)).pub("challenge_list", result_serializer.data)

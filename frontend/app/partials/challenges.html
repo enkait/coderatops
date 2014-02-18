@@ -1,6 +1,6 @@
 <div>
     <p>Select a challenge:</p>
-    <div ng-repeat="challenge in challenge_list">
+    <div ng-repeat="challenge in challenge_list | orderBy: 'id'">
         <div class="challenge" ng-click="$parent.open_challenge(challenge)">
             <table>
                 <tr>

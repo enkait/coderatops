@@ -37,6 +37,14 @@ var find_predicate = function(wh, predicate) {
 };
 
 gameAppControllers.controller('ChallengesCtrl', function ChallengeCtrl($scope, $profile, $challenges, $location, $pubsub) {
+    var pubsub_handler = function(message) {
+        console.log("Run handler on message: ", message);
+        if (message.type == 'challenge_list') {
+            $scope.challenge_list = message.payload;
+        }
+    };
+
+    $pubsub.sub(pubsub_handler);
     $challenges.list({}, function(challenge_list) {
         $scope.challenge_list = challenge_list;
         console.log($scope.challenge_list);
@@ -52,7 +60,9 @@ gameAppControllers.controller('ChallengesCtrl', function ChallengeCtrl($scope, $
         $location.path("/challenge/" + challenge.id);
     };
 
-    console.log($pubsub.socket);
+    $scope.$on('$destroy', function cleanup() {
+        $pubsub.unsub(pubsub_handler);
+    });
 });
 
 gameAppControllers.controller('SolveChallengeCtrl', function SolveChallengeCtrl($scope, $profile, $challenges, $submissions, $routeParams, $instances, $fbLogin, $timeout) {
